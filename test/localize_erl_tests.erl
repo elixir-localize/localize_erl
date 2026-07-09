@@ -71,6 +71,14 @@ language() ->
     ?assertEqual({ok, <<"German">>}, localize_language:name(<<"de">>)),
     ?assertEqual({ok, <<"German">>}, localize_language:name(de)).
 
+%% The manual-supervision path documented in the guide relies on
+%% Localize.Supervisor exposing a supervisor child spec.
+supervisor_child_spec_test() ->
+    Spec = 'Elixir.Localize.Supervisor':child_spec([]),
+    ?assertMatch(#{type := supervisor,
+                   start := {'Elixir.Localize.Supervisor', start_link, [[]]}},
+                 Spec).
+
 collation() ->
     ?assertEqual(lt, localize_collation:compare(<<"apple">>, <<"banana">>)),
     ?assertEqual(gt, localize_collation:compare(<<"banana">>, <<"apple">>)),

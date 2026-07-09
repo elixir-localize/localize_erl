@@ -20,6 +20,8 @@ Localize is an Elixir package, so it is pulled through [`rebar_mix`](https://git
  [{localize_erl, "0.1.0"}]}.
 ```
 
+Localize runs a small supervision tree. `localize_erl` does not auto-start it, so you choose: add `localize` to your release for auto-start, or mount `Localize.Supervisor` in your own tree. See [the supervision section of the guide](guides/using-in-erlang.md).
+
 ## Usage
 
 ```erlang

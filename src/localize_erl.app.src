@@ -2,7 +2,13 @@
  [{description, "Idiomatic Erlang bindings for locale-aware formatting, backed by Localize."},
   {vsn, "0.1.0"},
   {registered, []},
-  {applications, [kernel, stdlib, localize]},
+  %% `localize` is deliberately NOT listed here. It is a runtime dependency with
+  %% its own supervision tree, and this library leaves the choice of how to run
+  %% it to you: add `localize` to your release for auto-start, or mount
+  %% `Localize.Supervisor` in your own tree (see guides/using-in-erlang.md,
+  %% "Supervision"). Listing it here would force auto-start and preclude the
+  %% latter.
+  {applications, [kernel, stdlib]},
   {env, []},
   {modules, []},
   {licenses, ["Apache-2.0"]},

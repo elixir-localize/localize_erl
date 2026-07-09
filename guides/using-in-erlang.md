@@ -1,6 +1,54 @@
 # Using localize_erl
 
-`localize_erl` is a set of small, per-concern modules that format values for a locale, backed by [Localize](https://hexdocs.pm/localize). This guide covers the conventions, the modules, and where the edges and opportunities are.
+`localize_erl` is a set of small, per-concern modules that format values for a locale, backed by [Localize](https://hexdocs.pm/localize). This guide covers supervision, the conventions, the modules, and where the edges and opportunities are.
+
+## Supervision
+
+Localize runs a small supervision tree at runtime — a data loader, a locale loader (which owns the locale-validation ETS table), a cache sweeper, a format cache, and the collation table. `localize_erl` itself has no processes of its own; it is a pure library. Crucially, it does **not** list `localize` in its `.app` `applications`, so it never forces Localize's tree to auto-start behind your back — you decide how that tree is run.
+
+### Auto-start
+
+The simplest option is to run `localize` as an ordinary OTP application. List it in your release and OTP brings its tree up at boot, before your own app:
+
+```erlang
+%% rebar.config
+{relx, [{release, {my_app, "0.1.0"},
+         [kernel, stdlib, localize, my_app]}]}.
+```
+
+Nothing else is needed; the `localize_*` functions work as soon as your app is up.
+
+### Own the tree
+
+If you would rather Localize's processes live under your own supervisor — to control start ordering, or simply because you keep third-party trees under your own roots — mount `Localize.Supervisor` as a child. It exposes a standard supervisor child spec, so it drops straight into your `init/1`:
+
+```erlang
+%% my_app_sup.erl
+init([]) ->
+    SupFlags = #{strategy => one_for_one},
+    Children =
+        [#{id => localize,
+           start => {'Elixir.Localize.Supervisor', start_link, [[]]},
+           type => supervisor}
+         %% | your own children — after Localize if they format at startup
+        ],
+    {ok, {SupFlags, Children}}.
+```
+
+To keep OTP from *also* starting Localize's tree, include the application rather than starting it. Listing it under `included_applications` loads `localize` with your app but leaves its `start/2` to you — which is exactly what mounting `Localize.Supervisor` above does:
+
+```erlang
+%% my_app.app.src
+{included_applications, [localize]},
+```
+
+Now there is exactly one Localize tree, and it is a child of yours.
+
+### Ordering and one-time setup
+
+`Localize.Supervisor` must start **before** any of your processes that format at startup (importers, first-tick workers). It can start **after** anything Localize does not depend on — repos, listeners, registries — since Localize reads its CLDR data from disk and needs no consumer-side process.
+
+Starting the supervisor also runs Localize's idempotent one-time setup (interning CLDR atoms, resolving `supported_locales`). For the full rationale see Localize's own [supervision guide](https://hexdocs.pm/localize/supervision.html).
 
 ## Conventions
 
