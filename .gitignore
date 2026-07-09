@@ -1,0 +1,7 @@
+/_build/
+/doc/
+rebar.lock
+erl_crash.dump
+*.beam
+_checkouts/
+localize_erl-*.tar

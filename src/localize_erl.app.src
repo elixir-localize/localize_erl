@@ -1,0 +1,9 @@
+{application, localize_erl,
+ [{description, "Idiomatic Erlang bindings for locale-aware formatting, backed by Localize."},
+  {vsn, "0.1.0"},
+  {registered, []},
+  {applications, [kernel, stdlib, localize]},
+  {env, []},
+  {modules, []},
+  {licenses, ["Apache-2.0"]},
+  {links, [{"GitHub", "https://github.com/elixir-localize/localize_erl"}]}]}.
