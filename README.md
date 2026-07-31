@@ -8,7 +8,9 @@ Localize is a BEAM library, so no bridge is involved — each function is a dire
 
 ## Installation
 
-Localize is an Elixir package, so it is pulled through [`rebar_mix`](https://github.com/Supersonido/rebar_mix):
+**Elixir must be installed on your system.** Localize is an Elixir package, so building it requires the Elixir compiler even though your own code is Erlang. Erlang/OTP alone is not enough.
+
+`localize_erl` is not yet published to hex, so depend on it from git:
 
 ```erlang
 {plugins, [rebar_mix]}.
@@ -17,8 +19,11 @@ Localize is an Elixir package, so it is pulled through [`rebar_mix`](https://git
  [{post, [{compile, {mix, consolidate_protocols}}]}]}.
 
 {deps,
- [{localize_erl, "0.1.0"}]}.
+ [{localize_erl,
+   {git, "https://github.com/elixir-localize/localize_erl.git", {branch, "main"}}}]}.
 ```
+
+The [`rebar_mix`](https://github.com/Supersonido/rebar_mix) plugin is what compiles the Elixir dependency and consolidates its protocols.
 
 Localize runs a small supervision tree. `localize_erl` does not auto-start it, so you choose: add `localize` to your release for auto-start, or mount `Localize.Supervisor` in your own tree. See [the supervision section of the guide](guides/using-in-erlang.md).
 

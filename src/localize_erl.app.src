@@ -1,6 +1,6 @@
 {application, localize_erl,
  [{description, "Idiomatic Erlang bindings for locale-aware formatting, backed by Localize."},
-  {vsn, "0.1.0"},
+  {vsn, "0.2.0"},
   {registered, []},
   %% `localize` is deliberately NOT listed here. It is a runtime dependency with
   %% its own supervision tree, and this library leaves the choice of how to run
